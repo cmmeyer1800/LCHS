@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="box">
+        <link href="https://vjs.zencdn.net/7.17.0/video-js.css" rel="stylesheet" />
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://vjs.zencdn.net/7.17.0/video.min.js"></script>
+        <div class="columns">
+            <div class="column is-narrow has-text-centered">
+                {% for x in vidList %}
+                    <form action="/video" method="post">
+                        <div class="box">
+                            <button class="title is-4" name="{{ x }}" type="submit">{{ x }}</button>
+                        </div>
+                    </form>
+                {% endfor %}
+            </div>
+            <div class="column box">
+                <!-- <video controls style="width: 100%;">
+                    <source src={{ url_for('static', filename=vid) }} type="video/mp4">
+                    Your browser does not support the video tag.
+                </video> -->
+                <video
+                id="player"
+                class="video-js"
+                controls
+                preload="auto"
+                data-setup='{"fluid": true}'
+                style="width: 100%;"
+                >
+                <source src="{{ url_for('static', filename=vid) }}" type="video/mp4" />
+                <p class="vjs-no-js">
+                    To view this video please enable JavaScript, and consider upgrading to a
+                    web browser that
+                    <a href="https://videojs.com/html5-video-support/" target="_blank"
+                    >supports HTML5 video</a
+                    >
+                </p>
+                </video>
+                <script src="{{ url_for('static', filename="controls.js") }}"></script>
+            </div>
+        </div>
+    </div>
+{% endblock %}
