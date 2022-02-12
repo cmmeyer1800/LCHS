@@ -10,7 +10,7 @@
     <body>
       <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-          <a class="navbar-item" href="{{ url_for('index') }}">
+          <a class="navbar-item" href="{{ url_for('main.index') }}">
             <h2 class="title">LCHS - Local Content Hosting Service</h2>
           </a>
         </div>
@@ -18,12 +18,12 @@
           <div class="navbar-item">
             <div class="buttons">
               {% if not current_user.is_authenticated %}
-              <a class="button is-light" href="{{ url_for('login') }}">
+              <a class="button is-light" href="{{ url_for('auth.login') }}">
                 Log in
               </a>
               {% endif %}
               {% if current_user.is_authenticated %}
-                <a class="button is-danger" href="{{ url_for('logout') }}">
+                <a class="button is-danger" href="{{ url_for('auth.logout') }}">
                   Logout
                 </a>
               {% endif %}
