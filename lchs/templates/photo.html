@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="box">
+        <div class="columns">
+            <div class="column is-6">
+                <div class="has-text-centered">
+                    <a class="title is-4" href={{ url_for("main.video") }}>Home</a>
+                </div>
+            </div>
+            <div class="column is-6">
+                <div class="has-text-centered">
+                    <a class="title is-4" href={{ url_for("main.upload") }}>Upload</a>
+                </div>
+            </div>
+        </div>
+        <div class="box">
+            <div class="columns">
+                <div class="column is-12">
+                    {% for photo in photos %}
+                            <div class="has-text-centered">
+                                <div>
+                                    <a href={{ url_for('static', filename=photo) }}>
+                                        <img id="{{photo}}" src={{ url_for('static', filename=photo) }}>
+                                    <a>
+                                </div>
+                            </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
