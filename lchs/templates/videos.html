@@ -2,18 +2,20 @@
 {% block content %}
 <div class="container">
     <br>
-    <div class="level has-text-centered">
-        {% for x in vidList %}
-        <div class="level-item">
-            <nav class="panel is-info">
-                <p class="panel-heading">
-                    <a class="panel-heading" href="{{ url_for('main.video', vid=x) }}">{{ x }}</a>
-                </p>
-                <div class="panel-block">
-                    <img class="image is-128x128" src="/content/{{x}}.png">
-                </div>
-            </nav>
-        </div>
-        {% endfor %}
+    <div class="has-text-centered">
+        <columns class="columns is-multiline">
+            {% for x in vidList %}
+            <div class="column">
+                <nav class="panel is-info">
+                    <p class="panel-heading">
+                        <a class="panel-heading" href="{{ url_for('main.video', vid=x) }}">{{ x }}</a>
+                    </p>
+                    <div class="panel-block">
+                        <img class="image" src="/content/{{x[0:-4]}}.png">
+                    </div>
+                </nav>
+            </div>
+            {% endfor %}
+        </columns>
     </div>
     {% endblock %}

@@ -58,7 +58,7 @@ def videos():
 @main.route("/video/<vid>", methods=["GET"])
 @login_required
 def video(vid):
-    return render_template("video.html", vid=f"{vid}.mp4")
+    return render_template("video.html", vid=vid)
 
 
 @main.route("/photo", methods=["GET"])

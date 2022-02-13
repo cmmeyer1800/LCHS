@@ -12,7 +12,7 @@
     </div>
     <center>
         <div class="box">
-            <video id="player" class="video-js" controls preload="auto" data-setup='{}'>
+            <video id="player" class="video-js" controls preload="auto" data-setup='{"fluid": true}'>
                 <source src="{{ url_for('main.content', filename=vid) }}" type="video/mp4" />
                 <p class="vjs-no-js">
                     To view this video please enable JavaScript, and consider upgrading to a

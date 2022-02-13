@@ -16,15 +16,20 @@ def checkVid(file: str) -> bool:
 
 
 def checkImg(file: str) -> bool:
-    return file.endswith(".jpg") or file.endswith(".jpeg") or file.endswith(".png")
+    return (file.endswith(".jpg") or file.endswith(".jpeg")) and (
+        f"{file[0:-4]}.mp4" not in os.listdir(CONTENT_FOLDER)
+    )
 
 
 def getContentList(t: str = None) -> str:
     if t:
         if t == "video":
-            return [x[0:-4] for x in os.listdir(CONTENT_FOLDER) if checkVid(x)]
+            return [x for x in os.listdir(CONTENT_FOLDER) if checkVid(x)]
         elif t == "img":
-            return [x[0:-4] for x in os.listdir(CONTENT_FOLDER) if checkImg(x)]
+            return [x for x in os.listdir(CONTENT_FOLDER) if checkImg(x)]
+        elif t == "thumb":
+
+            pass
         else:
             sys.exit(
                 f'\u001b[31mType "{t}" passed to getContentList function is not valid\u001b[0m'
