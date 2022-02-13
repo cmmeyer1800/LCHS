@@ -1,3 +1,7 @@
+import os
+
+os.environ["CONTENT_FOLDER"] = "/home/collin/Code/LCHS/lchs/content"
+
 from lchs import create_app
 
 app = create_app()

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <br>
+    <div class="level has-text-centered">
+        {% for x in vidList %}
+        <div class="level-item">
+            <nav class="panel is-info">
+                <p class="panel-heading">
+                    <a class="panel-heading" href="{{ url_for('main.video', vid=x) }}">{{ x }}</a>
+                </p>
+                <div class="panel-block">
+                    <img class="image is-128x128" src="/content/{{x}}.png">
+                </div>
+            </nav>
+        </div>
+        {% endfor %}
+    </div>
+    {% endblock %}
