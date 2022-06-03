@@ -16,24 +16,23 @@ import os
 main = Blueprint("main", __name__, template_folder="templates", static_folder="static")
 
 
-# @main.route("/content/<filename>", methods=["GET"])
-# def content(filename):
-#     return send_from_directory(CONTENT_FOLDER, filename)
-
 @main.route("/content/image/<filename>", methods=["GET"])
 @login_required
 def content_image(filename):
     return send_from_directory(f"{CONTENT_FOLDER}/image", filename)
+
 
 @main.route("/content/video/<filename>", methods=["GET"])
 @login_required
 def content_video(filename):
     return send_from_directory(f"{CONTENT_FOLDER}/video", filename)
 
+
 @main.route("/content/thumbnail/<filename>", methods=["GET"])
 @login_required
 def content_thumbnail(filename):
     return send_from_directory(f"{CONTENT_FOLDER}/thumbnail", filename)
+
 
 @main.route("/", methods=["GET"])
 def index():
