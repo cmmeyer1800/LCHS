@@ -9,16 +9,31 @@ from flask import (
 )
 from werkzeug.utils import secure_filename
 from flask_login import login_required
-from lchs.content import getContentList, CONTENT_FOLDER
+from lchs.content import getImgList, getVidList, CONTENT_FOLDER
 import os
+
 
 main = Blueprint("main", __name__, template_folder="templates", static_folder="static")
 
 
-@main.route("/content/<filename>", methods=["GET"])
-def content(filename):
-    return send_from_directory(CONTENT_FOLDER, filename)
+# @main.route("/content/<filename>", methods=["GET"])
+# def content(filename):
+#     return send_from_directory(CONTENT_FOLDER, filename)
 
+@main.route("/content/image/<filename>", methods=["GET"])
+@login_required
+def content_image(filename):
+    return send_from_directory(f"{CONTENT_FOLDER}/image", filename)
+
+@main.route("/content/video/<filename>", methods=["GET"])
+@login_required
+def content_video(filename):
+    return send_from_directory(f"{CONTENT_FOLDER}/video", filename)
+
+@main.route("/content/thumbnail/<filename>", methods=["GET"])
+@login_required
+def content_thumbnail(filename):
+    return send_from_directory(f"{CONTENT_FOLDER}/thumbnail", filename)
 
 @main.route("/", methods=["GET"])
 def index():
@@ -46,13 +61,8 @@ def upload():
 @main.route("/video", methods=["GET"])
 @login_required
 def videos():
-    vidList = getContentList("video")
+    vidList = getVidList()
     return render_template("videos.html", vidList=vidList)
-    # if request.method == "POST":
-    #     for x in vidList:
-    #         if x in request.form:
-    #             vid = x
-    #     return render_template("video.html", vidList=vidList, vid=f"{vid}.mp4")
 
 
 @main.route("/video/<vid>", methods=["GET"])
@@ -64,5 +74,5 @@ def video(vid):
 @main.route("/photo", methods=["GET"])
 @login_required
 def photo():
-    photos = getContentList("img")
+    photos = getImgList()
     return render_template("photo.html", photos=photos)
