@@ -7,8 +7,13 @@ from .content import CONTENT_FOLDER
 db = SQLAlchemy()
 
 
-def create_app():
+def create_app(prod: bool = False):
     app = Flask(__name__)
+
+    if prod:
+        import logging
+        logging.basicConfig(filename='LCHS.log',level=logging.DEBUG)
+
 
     app.config["SECRET_KEY"] = "TestingSecretKey"
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"

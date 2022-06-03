@@ -1,38 +1,54 @@
 import os
 import sys
+import settings
 
-ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "heic", ".mp4"}
 
-CONTENT_FOLDER = os.getenv("CONTENT_FOLDER")
+ALLOWED_IMAGES = settings.getSetting("allowedImages")
+ALLOWED_VIDEOS = settings.getSetting("allowedVideos")
+
+CONTENT_FOLDER = settings.getSetting("contentFolder")
+
 
 if not CONTENT_FOLDER:
     sys.exit(
-        "\u001b[31mCONTENT_FOLDER environmental variable must be set! Exiting...\u001b[0m"
+        "\u001b[31mCONTENT_FOLDER variable must be set! Exiting...\u001b[0m"
     )
 
 
 def checkVid(file: str) -> bool:
-    return file.endswith(".mp4")
+    """
+    Returns whether or not the given file is a video of the type that we allow
+
+    True meaning it is, False meaning it is not
+    """
+
+    return True in [file.endswith(ext) for ext in ALLOWED_VIDEOS]
 
 
 def checkImg(file: str) -> bool:
-    return (file.endswith(".jpg") or file.endswith(".jpeg")) and (
-        f"{file[0:-4]}.mp4" not in os.listdir(CONTENT_FOLDER)
-    )
+    """
+    Returns whether or not the given file is an image of the type that we allow
+
+    True meaning it is, False meaning it is not
+    """
+    
+    # return (file.endswith(".jpg") or file.endswith(".jpeg")) and (
+    #     f"{file[0:-4]}.mp4" not in os.listdir(CONTENT_FOLDER)
+    # )
+    return True in [file.endswith(ext) for ext in ALLOWED_IMAGES]
 
 
-def getContentList(t: str = None) -> str:
-    if t:
-        if t == "video":
-            return [x for x in os.listdir(CONTENT_FOLDER) if checkVid(x)]
-        elif t == "img":
-            return [x for x in os.listdir(CONTENT_FOLDER) if checkImg(x)]
-        elif t == "thumb":
+def getImgList() -> list[str]:
+    """
+    Creates a list of the images in the content folder and returns it
+    """
+    
+    return [img for img in os.listdir(f"{CONTENT_FOLDER}/image") if checkImg(img)]
 
-            pass
-        else:
-            sys.exit(
-                f'\u001b[31mType "{t}" passed to getContentList function is not valid\u001b[0m'
-            )
-    else:
-        return os.listdir(CONTENT_FOLDER)
+
+def getVidList() -> list[str]:
+    """
+    Creates a list of the videos in the content folder and returns it
+    """
+    
+    return [vid for vid in os.listdir(f"{CONTENT_FOLDER}/video") if checkVid(vid)]
