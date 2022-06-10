@@ -52,7 +52,7 @@ def upload():
             return redirect(request.url)
         if file:
             filename = secure_filename(file.filename)
-            file.save(os.path.join(main.config["UPLOAD_FOLDER"], filename))
+            file.save(os.path.join(f"{CONTENT_FOLDER}/image", filename))
             return redirect(url_for("main.photo"))
     return render_template("upload.html")
 
