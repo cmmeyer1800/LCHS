@@ -1,19 +1,18 @@
+import os
+import tempfile
 import pytest
-from ..lchs import create_app
 
-@pytest.fixture()
-def app():
+from lchs import create_app, db
+
+@pytest.fixture
+def client():
+    db_fd, db_path = tempfile.mkstemp()
     app = create_app()
-    app.config.update({
-        "TESTING": True,
-    })
 
-    yield app
+    with app.test_client() as client:
+        with app.app_context():
+            db.create_all()
+        yield client
 
-@pytest.fixture()
-def client(app):
-    return app.test_client()
-
-@pytest.fixture()
-def runner(app):
-    return app.test_cli_runner()
+    os.close(db_fd)
+    os.unlink(db_path)
