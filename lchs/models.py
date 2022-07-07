@@ -17,3 +17,11 @@ class Video(db.Model):
     genre = db.Column(db.String(100))
     actors = db.Column(db.String(1024))
     keywords = db.Column(db.String(1024))
+
+
+class Photo(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    title = db.Column(db.String(512), unique=True)
+    keywords = db.Column(db.String(1024))
+    date = db.Column(db.DateTime)
+    people = db.Column(db.String(1024))

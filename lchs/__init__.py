@@ -2,7 +2,7 @@ from flask import Flask
 from flask_login import login_required
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from .content import CONTENT_FOLDER
+from lchs.settings import getSetting
 
 db = SQLAlchemy()
 
@@ -25,7 +25,7 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
 
-    app.config["CONTENT_FOLDER"] = CONTENT_FOLDER
+    app.config["CONTENT_FOLDER"] = getSetting('contentFolder')
 
     app.view_functions["static"] = login_required(app.send_static_file)
 

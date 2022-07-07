@@ -1,13 +1,84 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="box">
-        <div class="columns">
-            <column class="box column is-12 has-text-centered">
-                <form method=post enctype=multipart/form-data>
-                    <input class="title is-3 has-text-centered" type=file name=file>
-                    <input class="title is-3" type=submit value=Upload>
-                  </form>
-            </column>
-        </div>
+
+<script>
+    $( document ).ready(function() {
+        $("#thumb-upload").change(function(){
+            $("#thumb-name").text(this.files[0].name);
+        });
+    });
+</script>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div class="notification is-danger">
+      {{ messages[0] }}
+  </div>
+  {% endif %}
+{% endwith %}
+{% if success %}
+  <div class="notification is-success">
+    Video Successfully Uploaded!
+  </div>
+{% endif %}
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div id="navbarBasicExample" class="navbar-menu">
+    <div class="has-text-centered navbar-item">
+      <a class="title is-4" href={{ url_for("main.photo") }}>
+        <span class="icon">
+          <i class="fas fa-arrow-left"></i>
+        </span>
+         Back
+      </a>
     </div>
+  </div>
+</nav>
+<div class="columns">
+    <column class="column is-3"></column>
+    <column class="box column is-6 has-text-centered">
+        <form method=POST enctype=multipart/form-data>
+            <div class="field">
+                <label class="label">* Photo Title</label>
+                <div class="control">
+                    <input class="input" type="text" placeholder="e.g. Spring Break Trip to Colorado" name="title">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">People in photo</label>
+                <div class="control">
+                    <input class="input" name="people" type="text" placeholder="Enter Names As Comma Seperated List: e.g. Best Friend, Mother, Father, ...">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Keywords</label>
+                <div class="control">
+                  <textarea class="textarea" name="keywords" placeholder="Keywords to find video when searching, enter as comma seperated list"></textarea>
+                </div>
+            </div>
+            <div class="file has-name is-fullwidth">
+              <label class="file-label">
+                <input class="file-input" type="file" name="photo" id="thumb-upload">
+                <span class="file-cta">
+                  <span class="file-icon">
+                    <i class="fas fa-upload"></i>
+                  </span>
+                  <span class="file-label">
+                    * Choose a file…
+                  </span>
+                </span>
+                <span class="file-name">
+                  <p id="thumb-name">Upload Photo</p>
+                </span>
+              </label>
+            </div>
+            <p class="help is-danger">* indicates a required field</p>
+            <div class="field is-grouped">
+                <div class="control">
+                  <button class="button is-link">Submit</button>
+                </div>
+            </div>
+        </form>
+    </column>
+    <column class="column is-3"></column>
+</div>
+
 {% endblock %}

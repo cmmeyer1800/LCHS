@@ -4,16 +4,30 @@
     <link href=" https://vjs.zencdn.net/7.17.0/video-js.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://vjs.zencdn.net/7.17.0/video.min.js"></script>
-    <div class="level">
-        <a class="title is-6" href="{{ url_for('main.videos') }}">Back to list</a>
-        <h1 class="level-item has-text-centered title is-3">
-            {{ title }}
-        </h1>
-    </div>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="has-text-centered navbar-item">
+                <a class="title is-4" href={{ url_for("main.videos") }}>
+                    <span class="icon">
+                        <i class="fas fa-arrow-left"></i>
+                    </span>
+                    Back
+                </a>
+          </div>
+          {% for x in range(21) %}
+          <div class="has-text-centered navbar-item"></div>
+          {% endfor %}
+          <div class="has-text-centered navbar-item">
+            <div class="title">
+                test
+            </div>
+        </div>
+        </div>
+      </nav>
     <center>
         <div class="box">
             <video id="player" class="video-js" controls preload="auto" data-setup='{"fluid": true}'>
-                <source src="{{ url_for('main.content_video', filename=vid) }}" type="video/mp4" />
+                <source src="{{ url_for('main.content_video', filename=v.id) }}" type="video/mp4" />
                 <p class="vjs-no-js">
                     To view this video please enable JavaScript, and consider upgrading to a
                     web browser that

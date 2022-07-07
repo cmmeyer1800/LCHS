@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="title has-text-centered">
+        Key/Value Settings
+    </div>
+    <div class="columns">
+        <div class="column is-3"></div>
+        <div class="column is-6 box">
+            <form class="form" method="POST">
+                {% for kv in settings %}
+                <div class="field">
+                    <label class="label">{{ kv[0] }}</label>
+                    <div class="control">
+                        <input class="input" type="text" placeholder="Value for setting" value="{{ kv[1] }}" name="{{ kv[0] }}">
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="field">
+                    <p class="control">
+                        <button class="button is-success" type="submit">
+                            Login
+                        </button>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="column is-3"></div>
+    </div>
+</div>
+{% endblock %}

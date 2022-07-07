@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<link rel="stylesheet" href="https://bulma.io/vendor/fontawesome-free-5.15.2-web/css/all.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
 <script>
     $( document ).ready(function() {
         $("#video-upload").change(function(){
@@ -12,9 +11,6 @@
         });
     });
 </script>
-<br>
-<br>
-<br>
 {% with messages = get_flashed_messages() %}
   {% if messages %}
   <div class="notification is-danger">
@@ -27,6 +23,18 @@
     Video Successfully Uploaded!
   </div>
 {% endif %}
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div id="navbarBasicExample" class="navbar-menu">
+    <div class="has-text-centered navbar-item">
+      <a class="title is-4" href={{ url_for("main.videos") }}>
+        <span class="icon">
+          <i class="fas fa-arrow-left"></i>
+        </span>
+         Back
+      </a>
+    </div>
+  </div>
+</nav>
 <div class="columns">
     <column class="column is-3"></column>
     <column class="box column is-6 has-text-centered">
@@ -107,9 +115,6 @@
             <div class="field is-grouped">
                 <div class="control">
                   <button class="button is-link">Submit</button>
-                </div>
-                <div class="control">
-                  <button class="button is-link is-light">Cancel</button>
                 </div>
             </div>
         </form>

@@ -22,7 +22,7 @@ def login_post():
         return redirect(f"/auth/login?next={request.args.get('next')}")
     login_user(user, remember=remember)
     next = request.args.get("next")
-    if next:
+    if next or "None" in next:
         return redirect(request.args.get("next"))
     else:
         return redirect(url_for("main.index"))

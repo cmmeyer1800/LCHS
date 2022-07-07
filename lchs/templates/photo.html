@@ -1,26 +1,47 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="box">
-    <div class="columns">
-        <div class="column is-12">
-            <div class="has-text-centered">
+<div class="">
+    <nav class="navbar box" role="navigation" aria-label="main navigation">
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="has-text-centered navbar-item">
                 <a class="title is-4" href={{ url_for("main.upload_photo") }}>Upload</a>
             </div>
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <form class="form" method="POST">
+                        <div class="field">
+                            <p class="control has-icons-left">
+                            <input class="input" type="text" placeholder="Search Photos" name="search">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            </p>
+                        </div>           
+                    </form> 
+                </div>
+              </div>
         </div>
-    </div>
+    </nav>
     <div class="box">
         <div class="columns">
-            <div class="column is-12">
+            <div class="column is-2"></div>
+            <div class="column is-8">
                 {% for photo in photos %}
                 <div class="has-text-centered">
                     <div>
-                        <a href={{ url_for('main.content_image', filename=photo) }}>
-                            <img id="{{photo}}" src={{ url_for('main.content_image', filename=photo) }}>
+                        <a href={{ url_for('main.content_image', filename=photo.id) }}>
+                            <img id="{{photo.id}}" src={{ url_for('main.content_image', filename=photo.id) }}>
                         <a>
                     </div>
                 </div>
                 {% endfor %}
+                {% if photos|length == 0 %}
+                    <div class="notification is-danger">
+                        No Photos Found, to Upload, Press Upload Above!
+                    </div>
+                {% endif %}
             </div>
+            <div class="column is-2"></div>
         </div>
     </div>
 </div>

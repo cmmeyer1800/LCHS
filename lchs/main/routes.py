@@ -8,13 +8,14 @@ from flask import (
     send_from_directory,
     make_response
 )
-from lchs.models import Video
-from werkzeug.utils import secure_filename
+from lchs.models import Video, Photo
 from flask_login import login_required
-from lchs.content import getImgList, getVidList, CONTENT_FOLDER, getVideoLength
+from lchs.content import getVideoLength
 from lchs import db
-from sqlalchemy import func
 import os
+import json
+from lchs.settings import getSetting, getSettings, writeSettings
+from sqlalchemy.exc import IntegrityError
 
 
 main = Blueprint("main", __name__, template_folder="templates", static_folder="static")
@@ -23,19 +24,19 @@ main = Blueprint("main", __name__, template_folder="templates", static_folder="s
 @main.route("/content/image/<filename>", methods=["GET"])
 @login_required
 def content_image(filename):
-    return send_from_directory(f"{CONTENT_FOLDER}/image", filename)
+    return send_from_directory(f"{getSetting('contentFolder')}/image", filename)
 
 
 @main.route("/content/video/<filename>", methods=["GET"])
 @login_required
 def content_video(filename):
-    return send_from_directory(f"{CONTENT_FOLDER}/video", filename)
+    return send_from_directory(f"{getSetting('contentFolder')}/video", filename)
 
 
 @main.route("/content/thumbnail/<filename>", methods=["GET"])
 @login_required
 def content_thumbnail(filename):
-    return send_from_directory(f"{CONTENT_FOLDER}/thumbnail", filename)
+    return send_from_directory(f"{getSetting('contentFolder')}/thumbnail", filename)
 
 
 @main.route("/", methods=["GET"])
@@ -47,18 +48,48 @@ def index():
 @login_required
 def upload_photo():
     if request.method == "POST":
-        if "file" not in request.files:
-            flash("No file part uploaded")
+        photo = request.files["photo"]
+        if not photo or photo.filename == "":
+            flash("No Photo Uploaded")
             return redirect(request.url)
-        file = request.files["file"]
-        if file.filename == "":
-            flash("No selected file")
+
+        if request.form["title"] == "":
+            flash("No Title Given")
             return redirect(request.url)
-        if file:
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(f"{CONTENT_FOLDER}/image", filename))
-            return redirect(url_for("main.photo"))
-    return render_template("upload_photo.html")
+        title = request.form["title"]
+
+        if request.form["people"] == "":
+            people = None
+        else:
+            people = request.form["people"]
+
+        if request.form["keywords"] == "":
+            keywords = None
+        else:
+            keywords = request.form["keywords"]
+
+        allPhotos = [u.id for u in Photo.query.all()]
+        if not allPhotos:
+            id = 1
+        else:
+            id = max(allPhotos)+1
+
+        newVid = Photo(title=title, people=people, keywords=keywords)
+
+        db.session.add(newVid)
+        try:
+            db.session.commit()
+        except IntegrityError:
+            flash("Photo Title Already Exists!")
+            return redirect(url_for("main.upload_photo"))
+
+        photoPath = os.path.join(f"{getSetting('contentFolder')}/photo", str(id))
+        photo.save(photoPath)
+
+        return render_template("upload_photo.html", success=True)
+
+    else:
+        return render_template("upload_photo.html")
 
 
 @main.route("/upload_video", methods=["GET", "POST"])
@@ -97,12 +128,12 @@ def upload_video():
             id = max(allVids)+1
 
         thumb = request.files["thumb"]
-        thumbPath = os.path.join(f"{CONTENT_FOLDER}/thumbnail", str(id))
+        thumbPath = os.path.join(f"{getSetting('contentFolder')}/thumbnail", str(id))
         if thumb.filename != "":
             thumb.save(thumbPath)
 
 
-        videoPath = os.path.join(f"{CONTENT_FOLDER}/video", str(id))
+        videoPath = os.path.join(f"{getSetting('contentFolder')}/video", str(id))
         video.save(videoPath)
 
         vidLength = getVideoLength(videoPath)
@@ -111,19 +142,29 @@ def upload_video():
                         genre=genre, actors=actors, keywords=keywords)
 
         db.session.add(newVid)
-        db.session.commit()
+        
+        try:
+            db.session.commit()
+        except IntegrityError:
+            os.remove(videoPath)
+            flash("Video Title Already Exists!")
+            return redirect(url_for("main.upload_video"))
+
         return render_template("upload_video.html", success=True)
 
     else:
         return render_template("upload_video.html")
 
-@main.route("/video", methods=["GET"])
+@main.route("/video", methods=["GET", "POST"])
 @login_required
 def videos():
-    #vidList = getVidList()
-    vids = Video.query.all()
-    vidList = [(v.title, v.id) for v in vids]
-    return render_template("videos.html", vidList=vidList)
+    if request.method == "GET":
+        vids = Video.query.all()
+        return render_template("videos.html", vidList=vids)
+    else:
+        search = request.form["search"]
+        vids = Video.query.filter(Video.title.like(f"%{search}%")).all()
+        return render_template("videos.html", vidList=vids)
 
 
 @main.route("/video/<vid>", methods=["GET"])
@@ -133,11 +174,36 @@ def video(vid):
     if not v:
         return make_response("File not found", 400)
 
-    return render_template("video.html", vid=v.id, title=v.title)
+    return render_template("video.html", v=v)
 
 
-@main.route("/photo", methods=["GET"])
+@main.route("/photo", methods=["GET", "POST"])
 @login_required
 def photo():
-    photos = getImgList()
-    return render_template("photo.html", photos=photos)
+    if request.method == "GET":
+        p = Photo.query.all()
+        return render_template("photo.html", photos=p)
+
+    else:
+        search = request.form["search"]
+        p = Photo.query.filter(Photo.title.like(f"%{search}%")).all()
+        return render_template("photo.html", photos=p)
+
+
+@main.route("/settings", methods=["GET", "POST"])
+@login_required
+def settings():
+    if request.method == "GET":
+        settings = getSettings()
+        return render_template("settings.html", settings=settings)
+
+    else:
+        sets = {}
+        for k, v in request.form.items():
+            if "[" in v or "]" in v:
+                v = [l.strip("'") for l in v.strip('][').split(', ')]
+            sets[k] = v
+        writeSettings(sets)
+        settings = getSettings()
+
+        return render_template("settings.html", settings=settings)
