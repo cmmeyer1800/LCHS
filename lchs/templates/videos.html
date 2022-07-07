@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
+    <div class="columns">
+        <div class="column is-12">
+            <div class="has-text-centered">
+                <a class="title is-4" href={{ url_for("main.upload_video") }}>Upload</a>
+            </div>
+        </div>
+    </div>
     <br>
     <div class="has-text-centered">
         <columns class="columns is-multiline">
@@ -8,10 +15,10 @@
             <div class="column">
                 <nav class="panel is-info">
                     <p class="panel-heading">
-                        <a class="panel-heading" href="{{ url_for('main.video', vid=x) }}">{{ x }}</a>
+                        <a class="panel-heading" href="{{ url_for('main.video', vid=x[0]) }}">{{ x[0] }}</a>
                     </p>
                     <div class="panel-block">
-                        <img class="image" src="/content/thumbnail/{{x[0:-4]}}.png">
+                        <img class="image" src="{{ url_for('main.content_thumbnail', filename=x[1]) }}">
                     </div>
                 </nav>
             </div>

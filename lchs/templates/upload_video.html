@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block content %}
+<link rel="stylesheet" href="https://bulma.io/vendor/fontawesome-free-5.15.2-web/css/all.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+    $( document ).ready(function() {
+        $("#video-upload").change(function(){
+            $("#video-name").text(this.files[0].name);
+        });
+        $("#thumb-upload").change(function(){
+            $("#thumb-name").text(this.files[0].name);
+        });
+    });
+</script>
+<br>
+<br>
+<br>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div class="notification is-danger">
+      {{ messages[0] }}
+  </div>
+  {% endif %}
+{% endwith %}
+{% if success %}
+  <div class="notification is-success">
+    Video Successfully Uploaded!
+  </div>
+{% endif %}
+<div class="columns">
+    <column class="column is-3"></column>
+    <column class="box column is-6 has-text-centered">
+        <form method=POST enctype=multipart/form-data>
+            <div class="field">
+                <label class="label">* Video Title</label>
+                <div class="control">
+                    <input class="input" type="text" placeholder="e.g. Star Wars Episode IV - A New Hope" name="title">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Genre</label>
+                <div class="control">
+                    <div class="select">
+                        <select name="genre">
+                            <option>None</option>
+                            <option>Action</option>
+                            <option>Adventure</option>
+                            <option>Comedy</option>
+                            <option>Crime & Gangster</option>
+                            <option>Drama</option>
+                            <option>Historical</option>
+                            <option>Horror</option>
+                            <option>Musicals</option>
+                            <option>Science Fiction</option>
+                            <option>War</option>
+                            <option>Western</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Actors</label>
+                <div class="control">
+                    <input class="input" name="actors" type="text" placeholder="Enter Actors As Comma Seperated List: e.g. Harrison Ford, Carrie Fisher, Mark Hamill, ...">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Keywords</label>
+                <div class="control">
+                  <textarea class="textarea" name="keywords" placeholder="Keywords to find video when searching, enter as comma seperated list"></textarea>
+                </div>
+            </div>
+            <div class="file has-name is-fullwidth">
+              <label class="file-label">
+                <input class="file-input" type="file" name="thumb" id="thumb-upload">
+                <span class="file-cta">
+                  <span class="file-icon">
+                    <i class="fas fa-upload"></i>
+                  </span>
+                  <span class="file-label">
+                    Choose a file…
+                  </span>
+                </span>
+                <span class="file-name">
+                  <p id="thumb-name">Optionally Upload Thumbnail Image</p>
+                </span>
+              </label>
+            </div>
+            <br>
+            <div class="file has-name is-fullwidth">
+                <label class="file-label">
+                  <input class="file-input" type="file" name="video" id="video-upload">
+                  <span class="file-cta">
+                    <span class="file-icon">
+                      <i class="fas fa-upload"></i>
+                    </span>
+                    <span class="file-label">
+                      * Choose a file…
+                    </span>
+                  </span>
+                  <span class="file-name">
+                    <p id="video-name">Please Upload Video</p>
+                  </span>
+                </label>
+              </div>
+            <p class="help is-danger">* indicates a required field</p>
+            <div class="field is-grouped">
+                <div class="control">
+                  <button class="button is-link">Submit</button>
+                </div>
+                <div class="control">
+                  <button class="button is-link is-light">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </column>
+    <column class="column is-3"></column>
+</div>
+
+{% endblock %}

@@ -1,7 +1,7 @@
 import os
 import sys
 import settings
-
+import cv2
 
 ALLOWED_IMAGES = settings.getSetting("allowedImages")
 ALLOWED_VIDEOS = settings.getSetting("allowedVideos")
@@ -52,3 +52,10 @@ def getVidList() -> list[str]:
     """
     
     return [vid for vid in os.listdir(f"{CONTENT_FOLDER}/video") if checkVid(vid)]
+
+def getVideoLength(filepath: str) -> float:
+
+    video = cv2.VideoCapture(filepath)
+    duration = video.get(cv2.CAP_PROP_POS_MSEC)
+
+    return duration
