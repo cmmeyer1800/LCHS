@@ -9,7 +9,7 @@ from flask import (
     make_response
 )
 from lchs.models import Video, Photo
-from flask_login import login_required
+from flask_login import login_required, current_user
 from lchs.content import getVideoLength
 from lchs import db
 import os
@@ -74,7 +74,7 @@ def upload_photo():
         else:
             id = max(allPhotos)+1
 
-        newVid = Photo(title=title, people=people, keywords=keywords)
+        newVid = Photo(id=id, title=title, people=people, keywords=keywords)
 
         db.session.add(newVid)
         try:
@@ -138,7 +138,7 @@ def upload_video():
 
         vidLength = getVideoLength(videoPath)
 
-        newVid = Video(title=title, length=vidLength,
+        newVid = Video(id=id, title=title, length=vidLength,
                         genre=genre, actors=actors, keywords=keywords)
 
         db.session.add(newVid)
@@ -155,16 +155,32 @@ def upload_video():
     else:
         return render_template("upload_video.html")
 
+
+@main.route("/video/<vid>/delete", methods=["GET"])
+@login_required
+def videos_delete(vid):
+    v = Video.query.filter_by(title=vid).first()
+    if not v:
+        return make_response("Video not found", 400)
+
+    db.session.delete(v)
+    db.session.commit()
+    os.remove(os.path.join(f"{getSetting('contentFolder')}/video", str(v.id)))
+    os.remove(os.path.join(f"{getSetting('contentFolder')}/thumbnail", str(v.id)))
+    flash("Video Successfully Deleted")
+    return render_template("videos.html", vidList = Video.query.all(), success=True)
+
+
 @main.route("/video", methods=["GET", "POST"])
 @login_required
 def videos():
     if request.method == "GET":
         vids = Video.query.all()
-        return render_template("videos.html", vidList=vids)
+        return render_template("videos.html", vidList=vids, search=False)
     else:
         search = request.form["search"]
         vids = Video.query.filter(Video.title.like(f"%{search}%")).all()
-        return render_template("videos.html", vidList=vids)
+        return render_template("videos.html", vidList=vids, search=True)
 
 
 @main.route("/video/<vid>", methods=["GET"])
@@ -182,17 +198,20 @@ def video(vid):
 def photo():
     if request.method == "GET":
         p = Photo.query.all()
-        return render_template("photo.html", photos=p)
+        return render_template("photo.html", photos=p, search=False)
 
     else:
         search = request.form["search"]
         p = Photo.query.filter(Photo.title.like(f"%{search}%")).all()
-        return render_template("photo.html", photos=p)
+        return render_template("photo.html", photos=p, search=True)
 
 
 @main.route("/settings", methods=["GET", "POST"])
 @login_required
 def settings():
+    if not current_user.admin and getSetting("onlyAdminChangeSettings").lower() == "true":
+        return make_response("User must be admin to view/edit this page", 401)
+
     if request.method == "GET":
         settings = getSettings()
         return render_template("settings.html", settings=settings)

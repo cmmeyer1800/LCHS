@@ -1,44 +1,68 @@
 {% extends "base.html" %}
 {% block content %}
-<nav class="navbar box" role="navigation" aria-label="main navigation">
-    <div id="navbarBasicExample" class="navbar-menu">
-        <div class="has-text-centered navbar-item">
-            <a class="title is-4" href={{ url_for("main.upload_video") }}>Upload</a>
-        </div>
-        <div class="navbar-end">
-            <div class="navbar-item">
-                <form class="form" method="POST">
-                    <div class="field">
-                        <p class="control has-icons-left">
-                        <input class="input" type="text" placeholder="Search Videos" name="search">
-                        <span class="icon is-small is-left">
-                            <i class="fas fa-search"></i>
-                        </span>
-                        </p>
-                    </div>           
-                </form> 
+{% if success %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="notification is-success">
+                {{ messages[0] }}
             </div>
-          </div>
-    </div>
-</nav>
-
+        {% endif %}
+    {% endwith %}
+{% else %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="notification is-danger">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+    {% endwith %}
+{% endif %}
 <div class="box">
-    <br>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="has-text-centered navbar-item">
+                <a class="title is-4" href={{ url_for("main.upload_video") }}>Upload</a>
+            </div>
+            <div class="navbar-end">
+                {% if search %}
+                <div class="navbar-item">
+                    <a class="button is-danger" href="{{ url_for('main.videos') }}">
+                        Clear Search
+                    </a>
+                </div>
+                {% endif %}
+                <div class="navbar-item">
+                    <form class="form" method="POST">
+                        <div class="field">
+                            <p class="control has-icons-left">
+                            <input class="input" type="text" placeholder="Search Videos" name="search">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            </p>
+                        </div>           
+                    </form> 
+                </div>
+            </div>
+        </div>
+    </nav>
+    <hr>
     <div class="has-text-centered">
         <columns class="columns">
             <div class="column is-3"></div>
             <div class="column is-6">
                 {% for v in vidList %}
-                    <nav class="panel is-info">
-                        <p class="panel-heading">
-                            <a class="panel-heading" href="{{ url_for('main.video', vid=v.title) }}">{{ v.title }}</a>
-                        </p>
-                        <div class="panel-block">
-                            <figure class="image">
-                                <img src="{{ url_for('main.content_thumbnail', filename=v.id) }}">
-                            </figure>
+                    <article class="message is-info">
+                        <div class="message-header">
+                            {{ v.title }}
+                            <button class="delete" id="{{ v.id }}-delete"></button>
                         </div>
-                    </nav>
+                        <div class="message-body">
+                            <a class="image" href="{{ url_for('main.video', vid=v.title) }}">
+                                <img src="{{ url_for('main.content_thumbnail', filename=v.id) }}">
+                            </a>
+                        </div>
+                    </article>
                 {% endfor %}
                 {% if vidList|length == 0 %}
                     <div class="notification is-danger">
@@ -49,4 +73,43 @@
             <div class="column is-3"></div>
         </columns>
     </div>
-    {% endblock %}
+</div>
+
+
+{% for v in vidList %}
+<script>
+    $( document ).ready(function() {
+        $("#{{ v.id }}-delete").click(function(){
+            $("#{{ v.id }}-modal").addClass("is-active");
+        });
+        $("#{{ v.id }}-close").click(function(){
+            $("#{{ v.id }}-modal").removeClass("is-active");
+        });
+        $(document).keypress(function(e) {
+            if(e.which == 27) {
+                $("#{{ v.id }}-modal").removeClass("is-active");
+            }
+        });
+    }); 
+</script>
+<div class="modal" id="{{ v.id }}-modal">
+    <div class="modal-background"></div>
+        <div class="modal-card">
+        <header class="modal-card-head">
+        <p class="modal-card-title">Are You Sure You Want To Delete:</p>
+        <button class="delete" aria-label="close" id="{{ v.id }}-close"></button>
+        </header>
+        <section class="modal-card-body">
+            <h1 class="subtitle is-3">
+                {{ v.title }}
+            </h1>
+        </section>
+        <footer class="modal-card-foot">
+            <a class="button is-danger" href="{{ url_for('main.videos_delete', vid=v.title) }}" >Confirm Delete</a>
+        </footer>
+    </div>
+</div>
+{% endfor %}
+
+
+{% endblock %}

@@ -10,7 +10,7 @@ def create_app():
     app = Flask(__name__)
 
     app.config["SECRET_KEY"] = "TestingSecretKey"
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://lchs_user:password@127.0.0.1/lchs"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)

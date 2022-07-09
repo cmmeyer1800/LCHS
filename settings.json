@@ -1,1 +1,1 @@
-{"allowedImages": ["jpg", "jpeg", "png"], "allowedVideos": ["mp4"], "contentFolder": "/Users/collin/code/LCHS/lchs/content"}
+{"contentFolder": "/Users/collin/code/LCHS/lchs/content", "onlyAdminChangeSettings": "true"}
