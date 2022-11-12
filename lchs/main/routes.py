@@ -34,7 +34,8 @@ def content_image(filename):
 @main.route("/content/video/<filename>", methods=["GET"])
 @login_required
 def content_video(filename):
-    return send_from_directory(f"{getSetting('contentFolder')}/video", filename)
+    print(filename[:-4])
+    return send_from_directory(f"{getSetting('contentFolder')}/video", filename[:-4])
 
 
 @main.route("/content/thumbnail/<filename>", methods=["GET"])
@@ -227,8 +228,6 @@ def settings():
         sets = {}
 
         for k, v in request.form.items():
-            # if "[" in v or "]" in v:
-            #     v = [l.strip("'") for l in v.strip('][').split(', ')]
             if k == "onlyAdminChangeSettings":
                 if v != "true" and v != "false":
                     return make_response(f"Bad input parameter: \"{v}\", for setting: \"onlyAdminChangeSettings\". Can only be \"true\" or \"false\"", 400)

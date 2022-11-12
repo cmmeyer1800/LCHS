@@ -3,4 +3,4 @@
 export SETTINGSPATH='/Users/collin/code/LCHS/settings.json'
 export FLASK_APP=lchs
 
-flask run
+flask run --host='0.0.0.0'

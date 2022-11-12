@@ -30,7 +30,7 @@
         </div>
     </nav>
     <hr>
-    <div class="">
+    <!-- <div class="">
         <div class="columns">
             <div class="column is-2"></div>
             <div class="column is-8">
@@ -51,6 +51,32 @@
             </div>
             <div class="column is-2"></div>
         </div>
+    </div> -->
+    <div class="has-text-centered">
+        <columns class="columns">
+            <div class="column is-3"></div>
+            <div class="column is-6">
+                {% for photo in photos %}
+                    <article class="message is-info">
+                        <div class="message-header">
+                            {{ photo.title }}
+                            <button class="delete" id="{{ photo.id }}-delete"></button>
+                        </div>
+                        <div class="message-body">
+                            <a href={{ url_for('main.content_image', filename=photo.id) }}>
+                                <img id="{{photo.id}}" src={{ url_for('main.content_image', filename=photo.id) }}>
+                            <a>
+                        </div>
+                    </article>
+                {% endfor %}
+                {% if photos|length == 0 %}
+                    <div class="notification is-danger">
+                        No Photos Found, to Upload, Press Upload Above!
+                    </div>
+                {% endif %}
+            </div>
+            <div class="column is-3"></div>
+        </columns>
     </div>
 </div>
 {% endblock %}
