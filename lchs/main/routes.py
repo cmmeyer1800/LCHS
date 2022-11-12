@@ -8,9 +8,10 @@ from flask import (
     send_from_directory,
     make_response
 )
+import cv2
 from lchs.models import Video, Photo
 from flask_login import login_required, current_user
-from lchs.content import getVideoLength
+from lchs.content import getVideoLength, getVideoThumbnail
 from lchs import db
 import os
 import json
@@ -24,7 +25,7 @@ main = Blueprint("main", __name__, template_folder="templates", static_folder="s
 @main.route("/content/image/<filename>", methods=["GET"])
 @login_required
 def content_image(filename):
-    return send_from_directory(f"{getSetting('contentFolder')}/image", filename)
+    return send_from_directory(f"{getSetting('contentFolder')}/photo", filename)
 
 
 @main.route("/content/video/<filename>", methods=["GET"])
@@ -127,14 +128,17 @@ def upload_video():
         else:
             id = max(allVids)+1
 
+        videoPath = os.path.join(f"{getSetting('contentFolder')}/video", str(id))
+        video.save(videoPath)
+
         thumb = request.files["thumb"]
         thumbPath = os.path.join(f"{getSetting('contentFolder')}/thumbnail", str(id))
         if thumb.filename != "":
             thumb.save(thumbPath)
+        else:
+            _, buffer = cv2.imencode(".jpg", getVideoThumbnail(videoPath))
+            buffer.tofile(thumbPath)
 
-
-        videoPath = os.path.join(f"{getSetting('contentFolder')}/video", str(id))
-        video.save(videoPath)
 
         vidLength = getVideoLength(videoPath)
 
