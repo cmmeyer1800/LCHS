@@ -17,7 +17,10 @@ import os
 import json
 from lchs.settings import getSetting, getSettings, writeSettings
 from sqlalchemy.exc import IntegrityError
+import re
 
+
+filepath_regex = re.compile(r"/^(?:[\w]\:|\/)(\/[a-z_\-\s0-9\.]+)+\.(json)$/i")
 
 main = Blueprint("main", __name__, template_folder="templates", static_folder="static")
 
@@ -222,10 +225,24 @@ def settings():
 
     else:
         sets = {}
+
         for k, v in request.form.items():
-            if "[" in v or "]" in v:
-                v = [l.strip("'") for l in v.strip('][').split(', ')]
-            sets[k] = v
+            # if "[" in v or "]" in v:
+            #     v = [l.strip("'") for l in v.strip('][').split(', ')]
+            if k == "onlyAdminChangeSettings":
+                if v != "true" and v != "false":
+                    return make_response(f"Bad input parameter: \"{v}\", for setting: \"onlyAdminChangeSettings\". Can only be \"true\" or \"false\"", 400)
+                else:
+                    sets[k] = v
+            
+            elif k == "contentFolder":
+                if not os.path.isdir(v):
+                    return make_response(f"Bad input parameter: \"{v}\", for setting: \"contentFolder\". Directory does not exist!", 400)
+                else:
+                    sets[k] = v
+            else:
+                make_response(f"Bad input parameter: {k}, setting does not exist", 400)
+    
         writeSettings(sets)
         settings = getSettings()
 
