@@ -14,7 +14,6 @@ from flask_login import login_required, current_user
 from lchs.content import getVideoLength, getVideoThumbnail
 from lchs import db
 import os
-import json
 from lchs.settings import getSetting, getSettings, writeSettings
 from sqlalchemy.exc import IntegrityError
 import re
@@ -33,8 +32,7 @@ def content_image(filename):
 
 @main.route("/content/video/<filename>", methods=["GET"])
 @login_required
-def content_video(filename):
-    print(filename[:-4])
+def content_video(filename):    
     return send_from_directory(f"{getSetting('contentFolder')}/video", filename[:-4])
 
 
