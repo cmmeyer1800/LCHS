@@ -3,6 +3,7 @@ from flask_login import login_required
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from lchs.settings import getSetting
+import os
 
 db = SQLAlchemy()
 
@@ -10,7 +11,8 @@ def create_app():
     app = Flask(__name__)
 
     app.config["SECRET_KEY"] = "TestingSecretKey"
-    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://lchs_user:password@127.0.0.1/lchs"
+    # app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://lchs_user:password@127.0.0.1/lchs"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(os.getcwd(), "db.lite")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)

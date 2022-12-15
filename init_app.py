@@ -16,7 +16,9 @@ app = create_app()
 [os.remove(os.path.join(f"{getSetting('contentFolder')}/video", path)) for path in os.listdir(f"{getSetting('contentFolder')}/video")]
 
 with app.app_context():
-    engine = create_engine("postgresql://lchs_user:password@127.0.0.1/lchs")
+    # engine = create_engine("postgresql://lchs_user:password@127.0.0.1/lchs")
+    engine = create_engine("sqlite:///" + os.path.join(os.getcwd(), "db.lite"))
+    
     User.__table__.drop(engine)
     Video.__table__.drop(engine)
     Photo.__table__.drop(engine)
